@@ -8,7 +8,7 @@ import setuptools
 
 setuptools.setup(
     name="knob",
-    version="0.0.4",
+    version="0.0.5",
     author="claydodo and his little friends (xiao huo ban)",
     author_email="claydodo@foxmail.com",
     description="Django utils collection",
