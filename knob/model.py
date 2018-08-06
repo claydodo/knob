@@ -3,6 +3,7 @@
 import six
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import get_user_model
 
 
 def update_model(obj, info, fields=None):
@@ -28,9 +29,20 @@ def update_model(obj, info, fields=None):
 def get_model_class(model):
     """
     Deduct the model class from given input.
-    :param model: a '<app>.<model>' string, or a django model instance, or a model class
+    :param model: may be one of the following format:
+        * a '<app>.<model>' string
+        * 'AUTH_USER_MODEL'
+        * a django model instance,
+        * a model class
     :return: django model class
     """
+    # Special cases
+    if model is None:
+        return None
+
+    if model == 'AUTH_USER_MODEL':
+        return get_user_model()
+
     if isinstance(model, six.string_types):
         if '.' in model:
             app_label, model_name = model.split('.')
