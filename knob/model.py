@@ -47,11 +47,11 @@ def get_model_class(model):
         if '.' in model:
             app_label, model_name = model.split('.')
             model_name = model_name.lower()
-            return ContentType.objects.get(app_label=app_label, model=model_name)
+            return ContentType.objects.get(app_label=app_label, model=model_name).model_class()
         else:
             model_name = model.lower()
-            return ContentType.objects.get(model=model_name)
-    elif issubclass(model, models.Model):
+            return ContentType.objects.get(model=model_name).model_class()
+    elif isinstance(model, six.class_types) and issubclass(model, models.Model):
         return model
     elif isinstance(model, models.Model):
         return model.__class__
