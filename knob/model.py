@@ -14,14 +14,14 @@ def update_model(obj, info, fields=None):
     :param fields: optional, only update these fields.
     :return: updated obj (saved)
     """
-    updated_fields = set()
+    update_fields = set()
     for key, val in six.iteritems(info):
         if fields is None or key in fields:
             setattr(obj, key, val)
-        updated_fields.add(key)
+        update_fields.add(key)
 
-    if updated_fields:
-        obj.save(updated_fields=list(updated_fields))
+    if update_fields:
+        obj.save(update_fields=list(update_fields))
 
     return obj
 
