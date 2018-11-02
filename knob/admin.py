@@ -2,15 +2,22 @@
 from django.utils.html import format_html
 
 
-__all__ = ['color_tag']
+__all__ = ['rich_tag']
 
 
-def color_tag(text, color, bold=False, italic=False, tag='span'):
+def rich_tag(text, color=None, bold=False, italic=False, hint=None, tag='span'):
     opts = {
         "text": text,
-        "color": color,
+        "color": "color: {};".format(color) if color else "",
         "tag": tag,
         "bold": " font-weight: bold;" if bold else "",
         "italic": " font-style: italic;" if italic else "",
     }
-    return format_html(u'<{tag} style="color: {color};{bold}{italic}">{text}</{tag}>', **opts)
+
+    if hint:
+        opts['hint'] = hint
+        tmpl = u'<{tag} style="{color}{bold}{italic}" title="{hint}">{text}</{tag}>'
+    else:
+        tmpl = u'<{tag} style="{color}{bold}{italic}">{text}</{tag}>'
+
+    return format_html(tmpl, **opts)
