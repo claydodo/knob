@@ -2,7 +2,6 @@
 
 import six
 from django.db import models
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
 
 
@@ -43,6 +42,7 @@ def get_model_class(model):
     if model == 'AUTH_USER_MODEL':
         return get_user_model()
 
+    from django.contrib.contenttypes.models import ContentType
     if isinstance(model, six.string_types):
         if '.' in model:
             app_label, model_name = model.split('.')

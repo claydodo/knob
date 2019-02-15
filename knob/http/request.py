@@ -4,7 +4,7 @@ import six
 import json
 
 
-def get_request_para(request, **kwargs):
+def get_request_para(request, parsers=None, defaults=None):
     para = {}
     if request.method in ['POST', 'PUT', 'PATCH']:
         try:
@@ -16,9 +16,14 @@ def get_request_para(request, **kwargs):
             pass
     para.update(request.GET.dict())
 
-    for k, parser in six.iteritems(kwargs):
-        if callable(parser) and k in para:
-            para[k] = parser(para[k])
+    if parsers:
+        for k, parser in six.iteritems(parsers):
+            if callable(parser) and k in para:
+                para[k] = parser(para[k])
+
+    if defaults:
+        for k, v in six.iteritems(defaults):
+            para.setdefault(k, v)
 
     return para
 
