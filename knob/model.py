@@ -57,3 +57,23 @@ def get_model_class(model):
         return model.__class__
     else:
         raise ValueError(u"Not a valid model representation: {}".format(repr(model)))
+
+
+def get_model_instance(model_class, instance_or_id, raise_on_error=True):
+    """
+    Get model's instance by id.
+    :param model_class:
+    :param instance_or_id:
+    :param raise_on_error: if False, return None instead of raise.
+    :return:
+    """
+    if isinstance(instance_or_id, model_class):
+        return instance_or_id
+    else:
+        try:
+            return model_class.objects.get(pk=instance_or_id)
+        except Exception as e:
+            if raise_on_error:
+                raise
+            else:
+                return None
