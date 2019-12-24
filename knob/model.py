@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 
 import six
+import re
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -77,3 +78,65 @@ def get_model_instance(model_class, instance_or_id, raise_on_error=True):
                 raise
             else:
                 return None
+
+
+def get_model_instances(model_class, instances_or_ids, sep=',', ignore_invalid=True, raise_on_error=True):
+    """
+    Get model instances by ids.
+    :param model_class:
+    :param instances_or_ids:
+    :param sep:
+    :param ignore_invalid:
+    :param raise_on_error: only effective when ignore_invalid is False. if True, raise error; else add None to results.
+    :return:
+    """
+    results = []
+    if isinstance(instances_or_ids, six.string_types):
+        instances_or_ids = instances_or_ids.split(sep)
+
+    for item in instances_or_ids:
+        if isinstance(item, model_class):
+            results.append(item)
+        else:
+            try:
+                results.append(model_class.objects.get(pk=item))
+            except Exception as e:
+                if not ignore_invalid:
+                    if raise_on_error:
+                        raise e
+                    else:
+                        results.append(None)
+
+    return results
+
+
+def get_model_field(model, field, raise_on_error=True):
+    try:
+        fields = re.split(r'__', field)
+        cur = model
+        for f in fields:
+            cur = getattr(cur, f)
+        return cur
+    except Exception as e:
+        if not raise_on_error:
+            return None
+        raise
+
+
+def model_has_field(model, field, strict=False):
+    if '__' in field:
+        fields = re.split(r'__', field)
+        cur = model
+        for f in fields:
+            if strict and not isinstance(cur, models.Model):
+                return False
+
+            if cur is None:  # a null FK etc
+                return True
+            elif not hasattr(cur, f):
+                return False
+
+            cur = getattr(cur, f)
+        return True
+    else:
+        return hasattr(model, field)

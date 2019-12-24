@@ -27,3 +27,10 @@ def get_request_para(request, parsers=None, defaults=None):
 
     return para
 
+
+def get_ip(request):
+    if request.META.has_key('HTTP_X_REAL_IP'):
+        return request.META['HTTP_X_REAL_IP']
+    else:
+        return request.META['REMOTE_ADDR']
+
